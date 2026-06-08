@@ -1,0 +1,46 @@
+# {{ ansible_managed }}
+# Delete all existing rules
+-D
+
+# Buffer size
+-b 8192
+
+# Failure mode (1 = printk, 2 = panic)
+-f 1
+
+# Monitor changes to authentication configuration
+-w /etc/pam.d/ -p wa -k pam_changes
+-w /etc/nsswitch.conf -p wa -k nsswitch_changes
+
+# Monitor user/group changes
+-w /etc/passwd -p wa -k identity
+-w /etc/group -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+
+# Monitor sudo usage
+-w /etc/sudoers -p wa -k sudoers
+-w /etc/sudoers.d/ -p wa -k sudoers
+
+# Monitor SSH configuration
+-w /etc/ssh/sshd_config -p wa -k sshd_config
+
+# Monitor network configuration
+-w /etc/hosts -p wa -k hosts
+-w /etc/network/ -p wa -k network
+
+# Monitor cron
+-w /etc/crontab -p wa -k cron
+-w /etc/cron.d/ -p wa -k cron
+-w /var/spool/cron/ -p wa -k cron
+
+# Log all commands run by root
+-a always,exit -F arch=b64 -F euid=0 -S execve -k root_commands
+
+# Monitor kernel module loading
+-w /sbin/insmod -p x -k modules
+-w /sbin/rmmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+
+# Make the configuration immutable (reboot required to change)
+-e 2
