@@ -1,0 +1,27 @@
+---
+- name: Set performance-related sysctl parameters
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    reload: true
+  loop:
+    - { name: "fs.file-max", value: "{{ tuning_file_max | default('2097152') }}" }
+    - { name: "net.core.somaxconn", value: "{{ tuning_somaxconn | default('65535') }}" }
+    - { name: "net.core.netdev_max_backlog", value: "{{ tuning_netdev_max_backlog | default('65535') }}" }
+    - { name: "net.ipv4.tcp_max_syn_backlog", value: "{{ tuning_tcp_max_syn_backlog | default('65535') }}" }
+    - { name: "net.ipv4.tcp_tw_reuse", value: "1" }
+    - { name: "net.ipv4.tcp_fin_timeout", value: "{{ tuning_tcp_fin_timeout | default('15') }}" }
+    - { name: "vm.overcommit_memory", value: "{{ tuning_overcommit_memory | default('1') }}" }
+
+- name: Configure system limits
+  ansible.builtin.copy:
+    dest: /etc/security/limits.d/99-tuning.conf
+    content: |
+      * soft nofile {{ tuning_nofile_soft | default('65535') }}
+      * hard nofile {{ tuning_nofile_hard | default('65535') }}
+      * soft nproc {{ tuning_nproc_soft | default('65535') }}
+      * hard nproc {{ tuning_nproc_hard | default('65535') }}
+    owner: root
+    group: root
+    mode: "0644"
