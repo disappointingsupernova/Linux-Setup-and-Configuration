@@ -1,0 +1,13 @@
+---
+- name: Install logrotate
+  ansible.builtin.apt:
+    name: logrotate
+    state: present
+
+- name: Deploy custom logrotate configuration
+  ansible.builtin.template:
+    src: logrotate.conf.j2
+    dest: /etc/logrotate.d/custom
+    owner: root
+    group: root
+    mode: "0644"

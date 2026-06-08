@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+{% for rule in logrotate_rules %}
+{{ rule.path }} {
+    {{ rule.frequency | default('weekly') }}
+    rotate {{ rule.rotate | default(4) }}
+    {{ 'compress' if rule.compress | default(true) else 'nocompress' }}
+    {{ 'delaycompress' if rule.delaycompress | default(true) else '' }}
+    missingok
+    notifempty
+{% if rule.create is defined %}
+    create {{ rule.create }}
+{% endif %}
+{% if rule.postrotate is defined %}
+    postrotate
+        {{ rule.postrotate }}
+    endscript
+{% endif %}
+}
+{% endfor %}
