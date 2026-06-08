@@ -1,0 +1,31 @@
+---
+- name: Linux Host Setup and Hardening
+  hosts: "{{ target_hosts | default('all') }}"
+  become: true
+  vars_files:
+    - env.yml
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  roles:
+    - role: base
+
+    - role: syslog
+      when: enable_syslog | default(false) | bool
+
+    - role: fail2ban
+      when: enable_fail2ban | default(false) | bool
+
+    - role: unattended_upgrades
+      when: enable_unattended_upgrades | default(false) | bool
+
+    - role: ntp
+      when: enable_ntp | default(false) | bool
+
+    - role: docker
+      when: enable_docker | default(false) | bool
