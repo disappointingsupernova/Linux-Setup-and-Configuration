@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+[Journal]
+Storage=persistent
+Compress=yes
+SystemMaxUse={{ journald_max_use | default('500M') }}
+SystemMaxFileSize={{ journald_max_file_size | default('50M') }}
+MaxRetentionSec={{ journald_max_retention | default('1month') }}
+ForwardToSyslog=yes
