@@ -1,0 +1,28 @@
+---
+- name: Create additional users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    shell: "{{ item.shell | default('/bin/bash') }}"
+    groups: "{{ item.groups | default(omit) }}"
+    append: true
+    create_home: true
+    state: present
+  loop: "{{ additional_users }}"
+
+- name: Set authorised keys for additional users
+  ansible.posix.authorized_key:
+    user: "{{ item.0.name }}"
+    state: present
+    key: "{{ item.1 }}"
+  loop: "{{ additional_users | subelements('ssh_keys', skip_missing=True) }}"
+
+- name: Configure sudoers for privileged users
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{ item.name }}"
+    line: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+    create: true
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: "0440"
+  loop: "{{ additional_users | selectattr('sudo', 'defined') | selectattr('sudo') | list }}"
