@@ -1,0 +1,13 @@
+# Local environment configuration
+env.yml
+
+# Ansible retry files
+*.retry
+
+# Vault password file
+.vault_pass
+
+# SSH keys
+*.pem
+*.key
+id_*
