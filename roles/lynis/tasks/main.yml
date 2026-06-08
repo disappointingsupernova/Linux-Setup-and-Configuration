@@ -1,0 +1,26 @@
+---
+- name: Add Lynis repository key
+  ansible.builtin.apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: C80E383C3DE9F082E01391A0366C67DE91CA5D5F
+    state: present
+
+- name: Add Lynis repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://packages.cisofy.com/community/lynis/deb/ stable main"
+    state: present
+
+- name: Install Lynis
+  ansible.builtin.apt:
+    name: lynis
+    state: present
+    update_cache: true
+
+- name: Deploy Lynis scheduled audit cron job
+  ansible.builtin.cron:
+    name: "Lynis security audit"
+    job: "/usr/bin/lynis audit system --cronjob > /var/log/lynis-report.log 2>&1"
+    hour: "{{ lynis_cron_hour | default('3') }}"
+    minute: "{{ lynis_cron_minute | default('0') }}"
+    weekday: "{{ lynis_cron_weekday | default('1') }}"
+    user: root
