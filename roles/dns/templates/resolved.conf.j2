@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+[Resolve]
+DNS={{ dns_nameservers | join(' ') }}
+{% if dns_fallback_servers is defined %}
+FallbackDNS={{ dns_fallback_servers | join(' ') }}
+{% endif %}
+DNSOverTLS={{ 'yes' if dns_over_tls | default(false) else 'no' }}
+DNSSEC={{ 'yes' if dns_dnssec | default(false) else 'no' }}
