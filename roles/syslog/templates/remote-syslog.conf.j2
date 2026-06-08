@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+# Forward all logs to remote syslog server
+*.* @@{{ syslog_server }}:{{ syslog_port }}

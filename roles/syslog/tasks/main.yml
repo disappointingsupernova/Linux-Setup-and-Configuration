@@ -1,0 +1,20 @@
+---
+- name: Install rsyslog
+  ansible.builtin.apt:
+    name: rsyslog
+    state: present
+
+- name: Deploy remote syslog configuration
+  ansible.builtin.template:
+    src: remote-syslog.conf.j2
+    dest: /etc/rsyslog.d/99-remote.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart rsyslog
+
+- name: Ensure rsyslog is enabled and running
+  ansible.builtin.systemd:
+    name: rsyslog
+    enabled: true
+    state: started
