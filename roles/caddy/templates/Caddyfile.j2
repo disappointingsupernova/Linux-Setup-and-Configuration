@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+{% for site in caddy_sites %}
+{{ site.domain }} {
+{% if site.reverse_proxy is defined %}
+    reverse_proxy {{ site.reverse_proxy }}
+{% endif %}
+{% if site.root is defined %}
+    root * {{ site.root }}
+    file_server
+{% endif %}
+{% if site.tls_email is defined %}
+    tls {{ site.tls_email }}
+{% endif %}
+{% if site.headers is defined %}
+    header {
+{% for key, value in site.headers.items() %}
+        {{ key }} "{{ value }}"
+{% endfor %}
+    }
+{% endif %}
+    encode gzip
+    log {
+        output file /var/log/caddy/{{ site.domain }}.log
+    }
+}
+{% endfor %}
