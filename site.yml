@@ -14,18 +14,80 @@
 
   roles:
     - role: base
+      tags: [base]
+
+    - role: users
+      when: additional_users is defined and (additional_users | length > 0)
+      tags: [users]
+
+    - role: timezone
+      when: enable_timezone | default(false) | bool
+      tags: [timezone]
 
     - role: syslog
       when: enable_syslog | default(false) | bool
+      tags: [syslog]
+
+    - role: journald
+      when: enable_journald | default(false) | bool
+      tags: [journald]
 
     - role: fail2ban
       when: enable_fail2ban | default(false) | bool
+      tags: [fail2ban]
 
     - role: unattended_upgrades
       when: enable_unattended_upgrades | default(false) | bool
+      tags: [unattended_upgrades]
 
     - role: ntp
       when: enable_ntp | default(false) | bool
+      tags: [ntp]
+
+    - role: swap
+      when: enable_swap | default(false) | bool
+      tags: [swap]
+
+    - role: logrotate
+      when: enable_logrotate | default(false) | bool
+      tags: [logrotate]
+
+    - role: motd
+      when: enable_motd | default(false) | bool
+      tags: [motd]
+
+    - role: auditd
+      when: enable_auditd | default(false) | bool
+      tags: [auditd]
+
+    - role: node_exporter
+      when: enable_node_exporter | default(false) | bool
+      tags: [node_exporter]
+
+    - role: dns
+      when: enable_dns | default(false) | bool
+      tags: [dns]
+
+    - role: clamav
+      when: enable_clamav | default(false) | bool
+      tags: [clamav]
+
+    - role: lynis
+      when: enable_lynis | default(false) | bool
+      tags: [lynis]
+
+    - role: tuning
+      when: enable_tuning | default(false) | bool
+      tags: [tuning]
+
+    - role: caddy
+      when: enable_caddy | default(false) | bool
+      tags: [caddy]
+
+    - role: wireguard
+      when: enable_wireguard | default(false) | bool
+      tags: [wireguard]
 
     - role: docker
       when: enable_docker | default(false) | bool
+      tags: [docker]
