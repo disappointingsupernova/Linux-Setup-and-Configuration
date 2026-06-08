@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+# Scheduled ClamAV scan
+{{ clamav_scan_schedule | default('0 2 * * 0') }} root clamscan -r {{ clamav_scan_paths | default('/home /var /tmp') }} --infected --log=/var/log/clamav/scheduled-scan.log 2>&1
